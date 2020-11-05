@@ -20,6 +20,28 @@ namespace ProjectASPNETMVC.Controllers
             return View(db.GB.ToList());
         }
 
+        //自訂區
+        public ActionResult List()
+        {
+            //return View("_List",db.GB.ToList());
+            return View("_List", sortOrder());
+        }
+        public Object sortOrder()
+        {
+            var guestBooks = db.Set<GB>();
+            foreach (GB item in guestBooks)
+            {
+                System.Diagnostics.Trace.WriteLine(item.ID);
+                System.Diagnostics.Trace.WriteLine(item.Title);
+                System.Diagnostics.Trace.WriteLine(item.Content);
+                System.Diagnostics.Trace.WriteLine(item.PostTime);
+                System.Diagnostics.Trace.WriteLine("");
+            }
+            var result = guestBooks.OrderByDescending(m => m.PostTime);
+            return result.ToList();
+        }
+        //自訂區
+
         // GET: GuestBook/Details/5
         public ActionResult Details(Guid? id)
         {
@@ -51,6 +73,7 @@ namespace ProjectASPNETMVC.Controllers
             if (ModelState.IsValid)
             {
                 gB.ID = Guid.NewGuid();
+                gB.PostTime = DateTime.Now;
                 db.GB.Add(gB);
                 db.SaveChanges();
                 return RedirectToAction("Index");
@@ -85,7 +108,8 @@ namespace ProjectASPNETMVC.Controllers
             {
                 db.Entry(gB).State = EntityState.Modified;
                 db.SaveChanges();
-                return RedirectToAction("Index");
+                //return RedirectToAction("Index");
+                return RedirectToAction("List");
             }
             return View(gB);
         }
